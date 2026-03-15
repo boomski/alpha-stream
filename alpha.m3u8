@@ -1,3 +1,5 @@
 #EXTM3U
-#EXTINF:-1,Alpha Cyprus
-https://l4.cloudskep.com/alphacyp/acy/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9My8xNS8yMDI2IDU6MzY6MzUgUE0maGFzaF92YWx1ZT00OWd6ckk5ZGMxNmQ5d0tGVkwzcTZnPT0mdmFsaWRtaW51dGVzPTMw
+#EXTINF:-1 tvg-name="Alpha Cyprus",Alpha Cyprus
+#EXTVLCOPT:http-referrer=https://www.alphacyprus.com.cy/
+#EXTVLCOPT:http-origin=https://www.alphacyprus.com.cy
+https://l4.cloudskep.com/alphacyp/acy/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9My8xNS8yMDI2IDU6NDE6MDcgUE0maGFzaF92YWx1ZT05cyt5TC9INGlIV3lyTGtSQXcwL05nPT0mdmFsaWRtaW51dGVzPTMw
