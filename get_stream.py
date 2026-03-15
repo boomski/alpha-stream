@@ -9,19 +9,17 @@ headers = {
 
 r = requests.get(url, headers=headers)
 
-match = re.search(r'https://l4\.cloudskep\.com/[^"]+\.m3u8\?wmsAuthSign=[^"]+', r.text)
+match = re.search(r'https://l4\.cloudskep\.com/alphacyp/acy/playlist\.m3u8\?wmsAuthSign=[^\'"]+', r.text)
 
 if match:
     stream = match.group(0)
 
-    playlist = f"""#EXTM3U
-#EXTINF:-1,Alpha Cyprus
-{stream}
-"""
+    playlist = "#EXTM3U\n#EXTINF:-1,Alpha Cyprus\n" + stream
 
     with open("alpha.m3u8", "w") as f:
         f.write(playlist)
 
-    print("Playlist gemaakt")
+    print("Playlist gemaakt:", stream)
+
 else:
     print("Stream niet gevonden")
