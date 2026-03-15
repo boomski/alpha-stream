@@ -12,18 +12,20 @@ HEADERS = {
     "Origin": "https://www.alphacyprus.com.cy"
 }
 
+QUALITIES = ["fhd", "hd", "sd"]
+
 def get_master():
-    r = requests.get(MASTER_URL, headers=HEADERS)
+    r = requests.get(MASTER_URL, headers=HEADERS, timeout=10)
     r.raise_for_status()
     return r.text
 
-def extract_fhd(master):
+def extract_quality(master, quality):
     for line in master.splitlines():
-        if "/fhd/" in line and "chunks.m3u8" in line:
+        if f"/{quality}/" in line and "chunks.m3u8" in line:
             return line
 
 def fetch_playlist(url):
-    r = requests.get(url, headers=HEADERS)
+    r = requests.get(url, headers=HEADERS, timeout=10)
     r.raise_for_status()
     return r.text
 
@@ -34,17 +36,30 @@ def rewrite_playlist(content, base_url):
         if line.startswith("#") or line.strip() == "":
             lines.append(line)
         else:
-            # Absolute URL voor VLC
             lines.append(urljoin(base, line))
     return "\n".join(lines)
 
-@app.route("/live.m3u8")
-def stream():
+@app.route("/")
+def home():
+    return "Stream proxy running"
+
+@app.route("/live/<quality>.m3u8")
+def live_quality(quality):
+    if quality not in QUALITIES:
+        return "Quality not available", 404
     master = get_master()
-    fhd = extract_fhd(master)
-    playlist = fetch_playlist(fhd)
-    fixed = rewrite_playlist(playlist, fhd)
+    stream_url = extract_quality(master, quality)
+    playlist = fetch_playlist(stream_url)
+    fixed = rewrite_playlist(playlist, stream_url)
     return Response(fixed, mimetype="application/vnd.apple.mpegurl")
+
+@app.route("/iptv.m3u")
+def iptv_playlist():
+    lines = ["#EXTM3U"]
+    for q in QUALITIES:
+        lines.append(f"#EXTINF:-1,Alpha Cyprus {q.upper()}")
+        lines.append(f"/live/{q}.m3u8")
+    return Response("\n".join(lines), mimetype="application/vnd.apple.mpegurl")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
